@@ -10,8 +10,8 @@
 ;; Bump account's token counter for token
 (defn toktab-inc [toktab [account token]]
   (let [acctab0 (or (get toktab account) {})
-        cnt (or (get acctab0 token) 0)
-        acctab (conj acctab0 [token (inc cnt)])]
+        cnt     (or (get acctab0 token) 0)
+        acctab  (conj acctab0 [token (inc cnt)])]
     (conj toktab [account acctab])))
 
 ;; Update toktab by bumping all accounts in entry for all tokens
@@ -32,7 +32,7 @@
        (clojure.string/replace #"20\d{6}" "YYYYMMDD")
        (clojure.string/replace #"/\d{2}-\d{2}-\d{2}" "/YY-MM-DD")
        (clojure.string/split #",|/| "))
-   (filter #(> (count %) 0))))
+   (filter (complement clojure.string/blank?))))
 
 ;; P_occur is the occurrence probability of token among
 ;; all tokens recorded for account.
@@ -152,13 +152,14 @@
 
 ;; command line args spec
 (def cl-args-spec
-  (array-map
-   :ledger-file
-   {:opt "-l" :value "ledger.dat"
+  {:ledger-file
+   {:opt "-l"
+    :value "ledger.dat"
     :help "Ledger file to get accounts and probabilities"}
 
    :csv-file
-   {:opt "-f" :value "transactions.csv"
+   {:opt "-f"
+    :value "transactions.csv"
     :help "Input transactions in CSV format"}
 
    :csv-file-encoding
@@ -216,7 +217,7 @@
 
    :debug
    {:opt "-dbg" :value false
-    :help "Include debug information in the generated output"}))
+    :help "Include debug information in the generated output"}})
 
 (defn print-usage-and-die [message]
   (println message)
